@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-K8S_VERSION="v1.30.0"
+K8S_VERSION="v1.31.4"
 ETCD_VERSION="v3.5.14"
 CNI_VERSION="v1.5.0"
 CRICTL_VERSION="v1.30.0"
