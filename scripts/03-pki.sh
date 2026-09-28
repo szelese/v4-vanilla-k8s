@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 0. Ensure root
+if [ "$EUID" -ne 0 ]; then
+  echo "[-] This script must be run as root (or with sudo)." >&2
+  exit 1
+fi
+
+PKI_DIR="/etc/kubernetes/pki"
+mkdir -p "${PKI_DIR}"
+cd "${PKI_DIR}"
+
+# Robust node IP detection (with fallback)
+NODE_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}' || hostname -I | awk '{print $1}')
+NODE_NAME=$(hostname -s)
+
+echo "==> Configuring PKI for Node: ${NODE_NAME} (IP: ${NODE_IP})"
+
+# 1. Generate internal Certificate Authority (CA) and Service Account key pair
+echo "==> 1. Generating internal CA and Service Account key pair..."
+openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -key ca.key -subj "/CN=kubernetes-ca" -days 3650 -out ca.crt
+
+openssl genrsa -out sa.key 2048
+openssl rsa -in sa.key -pubout -out sa.pub
+
+# 2. Generate Front-Proxy CA (Required for metrics-server & API aggregation)
+echo "==> 2. Generating Front-Proxy CA and Client..."
+openssl genrsa -out front-proxy-ca.key 2048
+openssl req -x509 -new -nodes -key front-proxy-ca.key -subj "/CN=front-proxy-ca" -days 3650 -out front-proxy-ca.crt
+
+openssl genrsa -out front-proxy-client.key 2048
+openssl req -new -key front-proxy-client.key -subj "/CN=front-proxy-client" -out front-proxy-client.csr
+openssl x509 -req -in front-proxy-client.csr -CA front-proxy-ca.crt -CAkey front-proxy-ca.key -CAcreateserial -out front-proxy-client.crt -days 3650
+
+# 3. Generate etcd server certificate with SANs
+echo "==> 3. Generating etcd server certificate..."
+cat > etcd.cnf <<CONFIG
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+prompt = no
+[req_distinguished_name]
+CN = etcd-server
+[v3_req]
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+[alt_names]
+IP.1 = 127.0.0.1
+IP.2 = ${NODE_IP}
+DNS.1 = localhost
+DNS.2 = ${NODE_NAME}
+CONFIG
+
+openssl genrsa -out etcd.key 2048
+openssl req -new -key etcd.key -out etcd.csr -config etcd.cnf
+openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -days 3650 -extensions v3_req -extfile etcd.cnf
+
+# 4. Generate kube-apiserver certificate with internal routing SANs
+echo "==> 4. Generating kube-apiserver server certificate..."
+cat > apiserver.cnf <<CONFIG
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+prompt = no
+[req_distinguished_name]
+CN = kube-apiserver
+[v3_req]
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+[alt_names]
+IP.1 = 127.0.0.1
+IP.2 = ${NODE_IP}
+IP.3 = 10.96.0.1
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+DNS.5 = localhost
+DNS.6 = ${NODE_NAME}
+CONFIG
+
+openssl genrsa -out apiserver.key 2048
+openssl req -new -key apiserver.key -out apiserver.csr -config apiserver.cnf
+openssl x509 -req -in apiserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out apiserver.crt -days 3650 -extensions v3_req -extfile apiserver.cnf
+
+# 5. Generate component client certificates
+echo "==> 5. Generating component client certificates..."
+for COMP in admin kube-controller-manager kube-scheduler kube-proxy; do
+  SUBJ="/CN=${COMP}"
+  [ "${COMP}" = "admin" ] && SUBJ="/CN=admin/O=system:masters"
+  [ "${COMP}" = "kube-controller-manager" ] && SUBJ="/CN=system:kube-controller-manager"
+  [ "${COMP}" = "kube-scheduler" ] && SUBJ="/CN=system:kube-scheduler"
+  [ "${COMP}" = "kube-proxy" ] && SUBJ="/CN=system:kube-proxy"
+
+  openssl genrsa -out "${COMP}.key" 2048
+  openssl req -new -key "${COMP}.key" -subj "${SUBJ}" -out "${COMP}.csr"
+  openssl x509 -req -in "${COMP}.csr" -CA ca.crt -CAkey ca.key -CAcreateserial -out "${COMP}.crt" -days 3650
+done
+
+# Generate kubelet client certificate with node authorization subject
+openssl genrsa -out kubelet.key 2048
+openssl req -new -key kubelet.key -subj "/CN=system:node:${NODE_NAME}/O=system:nodes" -out kubelet.csr
+openssl x509 -req -in kubelet.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out kubelet.crt -days 3650
+
+# 6. Generate kubeconfigs with embedded certificates
+echo "==> 6. Generating kubeconfig files..."
+K8S_ENDPOINT="https://127.0.0.1:6443"
+
+for USER in admin kube-controller-manager kube-scheduler kubelet kube-proxy; do
+  CONFIG_PATH="/etc/kubernetes/${USER}.kubeconfig"
+
+  kubectl config set-cluster vanilla-k8s \
+    --certificate-authority=ca.crt \
+    --embed-certs=true \
+    --server="${K8S_ENDPOINT}" \
+    --kubeconfig="${CONFIG_PATH}"
+
+  kubectl config set-credentials "${USER}" \
+    --client-certificate="${USER}.crt" \
+    --client-key="${USER}.key" \
+    --embed-certs=true \
+    --kubeconfig="${CONFIG_PATH}"
+
+  kubectl config set-context default \
+    --cluster=vanilla-k8s \
+    --user="${USER}" \
+    --kubeconfig="${CONFIG_PATH}"
+
+  kubectl config use-context default --kubeconfig="${CONFIG_PATH}"
+done
+
+# Configure root and local user kubectl context
+mkdir -p /root/.kube
+cp /etc/kubernetes/admin.kubeconfig /root/.kube/config
+if [ -n "${SUDO_USER:-}" ]; then
+  USER_HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
+  mkdir -p "${USER_HOME}/.kube"
+  cp /etc/kubernetes/admin.kubeconfig "${USER_HOME}/.kube/config"
+  chown -R "${SUDO_USER}:${SUDO_USER}" "${USER_HOME}/.kube"
+fi
+
+# Cleanup temporary CSRs and lock permissions
+rm -f *.csr *.cnf
+chmod 600 *.key
+echo "--> PKI and kubeconfigs generated successfully."
