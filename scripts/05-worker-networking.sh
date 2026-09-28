@@ -67,6 +67,7 @@ authorization:
 clusterDomain: cluster.local
 clusterDNS:
   - 10.96.0.10
+resolvConf: /run/systemd/resolve/resolv.conf
 cgroupDriver: systemd
 containerRuntimeEndpoint: unix:///run/containerd/containerd.sock
 failSwapOn: true

@@ -1,6 +1,6 @@
 # V4 Vanilla Kubernetes on Bare-Metal
 
-Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36 cluster directly on Ubuntu 22.04 bare-metal/VM using native systemd units.
+Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.4 cluster directly on Ubuntu 22.04 bare-metal/VM using native systemd units.
 
 ## Architecture
 

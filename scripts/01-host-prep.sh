@@ -42,6 +42,10 @@ echo "==> 5. Configuring containerd..."
 mkdir -p /etc/containerd
 containerd config default | tee /etc/containerd/config.toml > /dev/null
 sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+if ! grep -q 'SystemdCgroup = true' /etc/containerd/config.toml; then
+  echo "[-] Error: Failed to configure SystemdCgroup in /etc/containerd/config.toml" >&2
+  exit 1
+fi
 
 systemctl restart containerd
 systemctl enable containerd

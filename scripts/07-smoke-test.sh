@@ -42,9 +42,13 @@ echo "==> 3. Verifying DNS resolution and Service routing..."
 kubectl run test-client --image=curlimages/curl:8.7.1 -n "${TEST_NS}" --restart=Never -- sleep 3600
 kubectl wait --namespace "${TEST_NS}" --for=condition=Ready pod/test-client --timeout=60s
 
-# DNS lookup to CoreDNS
+# Internal DNS lookup to CoreDNS
 echo "    -> Testing internal DNS resolution (nginx-svc.${TEST_NS}.svc.cluster.local)..."
 kubectl exec test-client -n "${TEST_NS}" -- nslookup "nginx-svc.${TEST_NS}.svc.cluster.local" >/dev/null
+
+# External DNS lookup (upstream host resolver)
+echo "    -> Testing external DNS resolution (example.com)..."
+kubectl exec test-client -n "${TEST_NS}" -- nslookup example.com >/dev/null
 
 # Service ClusterIP connectivity
 echo "    -> Testing Service ClusterIP connectivity..."
