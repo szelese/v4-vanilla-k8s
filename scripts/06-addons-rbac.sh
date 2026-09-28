@@ -90,6 +90,7 @@ spec:
       labels:
         k8s-app: kube-dns
     spec:
+      dnsPolicy: Default
       serviceAccountName: coredns
       containers:
       - name: coredns
@@ -158,5 +159,3 @@ echo "==> 2. Waiting for CoreDNS deployment rollout..."
 kubectl rollout status deployment/coredns -n kube-system --timeout=120s
 
 echo "--> CoreDNS deployed successfully."
-EOF
-chmod +x scripts/06-addons-rbac.sh
