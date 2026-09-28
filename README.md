@@ -14,6 +14,11 @@ cd v4-vanilla-k8s
 sudo ./install.sh
 ```
 
+## Architectural Scope & Trade-offs
+
+* **Single-Node Topology:** Designed specifically as a single-host control-plane + worker runtime lab using local bridge CNI (`10.244.0.0/24`) and loopback API routing (`127.0.0.1:6443`). For multi-node expansion, replace host-local IPAM with an overlay CNI (e.g. Cilium/Calico).
+* **Static mTLS Baseline:** OpenSSL PKI issues long-lived (3650-day) certificates without dynamic Kubelet CSR rotation for educational determinism.
+
 ## Execution Pipeline
 
 The cluster is bootstrapped sequentially through modular scripts:
