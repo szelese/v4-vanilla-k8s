@@ -154,8 +154,15 @@ systemctl enable --now etcd kube-apiserver kube-controller-manager kube-schedule
 
 # 6. Apply RBAC permissions for kube-apiserver to kubelet
 echo "==> 6. Waiting for API Server to become responsive..."
+TIMEOUT=60
+ELAPSED=0
 until kubectl --kubeconfig=/etc/kubernetes/admin.kubeconfig get --raw='/readyz' >/dev/null 2>&1; do
+  if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+    echo "[-] Error: Timed out waiting for kube-apiserver to report ready." >&2
+    exit 1
+  fi
   sleep 2
+  ELAPSED=$((ELAPSED + 2))
 done
 
 echo "==> Applying kube-apiserver to kubelet RBAC rule..."

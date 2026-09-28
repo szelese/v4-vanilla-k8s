@@ -134,17 +134,23 @@ systemctl enable --now kubelet kube-proxy
 
 # 5. Node status check
 echo "==> 5. Waiting for node to register and become Ready..."
-set +e
+NODE_READY=false
 for i in {1..30}; do
-  STATUS=$(kubectl --kubeconfig=/etc/kubernetes/admin.kubeconfig get nodes "${NODE_NAME}" -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)
+  STATUS=$(kubectl --kubeconfig=/etc/kubernetes/admin.kubeconfig get nodes "${NODE_NAME}" -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || true)
   if [ "${STATUS}" = "True" ]; then
     echo "--> Node ${NODE_NAME} is Ready!"
+    NODE_READY=true
     break
   fi
   echo "    Waiting for Ready status... (${i}/30)"
   sleep 2
 done
-set -e
+
+if [ "$NODE_READY" != "true" ]; then
+  echo "[-] Error: Node ${NODE_NAME} failed to reach Ready status within 60s." >&2
+  kubectl --kubeconfig=/etc/kubernetes/admin.kubeconfig describe node "${NODE_NAME}" || true
+  exit 1
+fi
 
 kubectl --kubeconfig=/etc/kubernetes/admin.kubeconfig get nodes -o wide
 echo "--> Worker components initialized successfully."
