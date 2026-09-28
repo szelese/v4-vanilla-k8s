@@ -46,4 +46,13 @@ sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.t
 systemctl restart containerd
 systemctl enable containerd
 
+# 6. Configure crictl CLI endpoint
+echo "==> 6. Configuring crictl endpoint..."
+cat > /etc/crictl.yaml <<EOF
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 10
+debug: false
+EOF
+
 echo "--> Host preparation completed successfully."

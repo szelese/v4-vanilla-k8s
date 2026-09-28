@@ -1,7 +1,7 @@
+cat > scripts/06-addons-rbac.sh <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 0. Ensure root
 if [ "$EUID" -ne 0 ]; then
   echo "[-] This script must be run as root (or with sudo)." >&2
   exit 1
@@ -9,39 +9,8 @@ fi
 
 export KUBECONFIG=/etc/kubernetes/admin.kubeconfig
 
-# 1. Apply kube-apiserver to Kubelet RBAC permissions
-echo "==> 1. Configuring kube-apiserver to kubelet RBAC..."
-kubectl apply -f - <<MANIFEST
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: system:kube-apiserver-to-kubelet
-rules:
-  - apiGroups: [""]
-    resources:
-      - nodes/proxy
-      - nodes/stats
-      - nodes/log
-      - nodes/spec
-      - nodes/metrics
-    verbs: ["*"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: system:kube-apiserver
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:kube-apiserver-to-kubelet
-subjects:
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: kube-apiserver
-MANIFEST
-
-# 2. Deploy CoreDNS for in-cluster service discovery
-echo "==> 2. Deploying CoreDNS..."
+# 1. Deploy CoreDNS for in-cluster service discovery
+echo "==> 1. Deploying CoreDNS..."
 kubectl apply -f - <<MANIFEST
 apiVersion: v1
 kind: ServiceAccount
@@ -186,7 +155,9 @@ spec:
     protocol: TCP
 MANIFEST
 
-echo "==> 3. Waiting for CoreDNS deployment rollout..."
+echo "==> 2. Waiting for CoreDNS deployment rollout..."
 kubectl rollout status deployment/coredns -n kube-system --timeout=120s
 
-echo "--> Addons and RBAC rules applied successfully."
+echo "--> CoreDNS deployed successfully."
+EOF
+chmod +x scripts/06-addons-rbac.sh
