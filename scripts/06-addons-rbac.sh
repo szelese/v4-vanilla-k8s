@@ -1,4 +1,3 @@
-cat > scripts/06-addons-rbac.sh <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
