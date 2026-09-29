@@ -13,7 +13,7 @@ case "${HOST_ARCH}" in
   x86_64)  ARCH="amd64" ;;
   aarch64) ARCH="arm64" ;;
   *)
-    echo "[-] Nem támogatott architektúra: ${HOST_ARCH}. Csak amd64 és arm64 támogatott." >&2
+    echo "[-] Unsupported architecture: ${HOST_ARCH}. Only amd64 and arm64 are supported." >&2
     exit 1
     ;;
 esac
@@ -31,7 +31,7 @@ verify_sha256() {
   local actual_hash
   actual_hash=$(sha256sum "${file}" | awk '{print $1}')
   if [ "${actual_hash}" != "${expected_hash}" ]; then
-    echo "[-] Checksum hiba a fájlnál: ${file} (Elvárt: ${expected_hash}, Kapott: ${actual_hash})" >&2
+    echo "[-] Checksum mismatch for ${file} (Expected: ${expected_hash}, Got: ${actual_hash})" >&2
     exit 1
   fi
 }
