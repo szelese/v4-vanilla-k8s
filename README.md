@@ -2,6 +2,14 @@
 
 Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.4 cluster directly on Ubuntu 22.04 bare-metal/VM using native systemd units.
 
+## 🚧 Project Status & Scope
+
+This repository represents an active engineering lab and reference architecture for Vanilla Kubernetes on bare-metal.
+
+* **Status:** Tested and verified on clean Ubuntu 22.04 LTS installations (local bare-metal & Multipass KVM).
+* **Target Architectures:** `amd64` (x86_64) and `arm64` (aarch64) with automated host detection.
+* **Intended Use:** Educational baseline, cloud-native portfolio showcase, and low-dependency on-prem prototyping.
+
 ## Architecture
 
 ![Architecture Draft](docs/architecture-draft.png)
@@ -16,8 +24,9 @@ sudo ./install.sh
 
 ## Architectural Scope & Trade-offs
 
-* **Single-Node Topology:** Designed specifically as a single-host control-plane + worker runtime lab using local bridge CNI (`10.244.0.0/24`) and loopback API routing (`127.0.0.1:6443`). For multi-node expansion, replace host-local IPAM with an overlay CNI (e.g. Cilium/Calico).
-* **Static mTLS Baseline:** OpenSSL PKI issues long-lived (3650-day) certificates without dynamic Kubelet CSR rotation for educational determinism.
+* **Single-Node Topology:** Designed specifically as a single-host control-plane + worker runtime lab using local bridge CNI (10.244.0.0/24). The kube-apiserver binds to 0.0.0.0:6443 for cluster and Pod reachability, while local CLI tooling connects via 127.0.0.1:6443.
+* **Multi-Node Expansion Requirements:** Expanding beyond a single node requires more than replacing host-local IPAM with an overlay CNI (e.g. Cilium/Calico): it also requires a dedicated control-plane load balancer / VIP, expanded certificate SANs, and controller-managed PodCIDR allocation.
+* **Hardened Static mTLS:** Dedicated x509 PKI issuing mutual TLS certificates for etcd, control plane components, and Kubelet server-client authentication with node SANs. Certificates use 3650-day lifespans without dynamic CSR rotation for operational determinism.
 
 ## Execution Pipeline
 
