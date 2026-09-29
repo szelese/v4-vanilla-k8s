@@ -8,6 +8,12 @@ fi
 
 export KUBECONFIG=/etc/kubernetes/admin.kubeconfig
 
+# 0. Deploy RBAC resources for CoreDNS
+UPSTREAM_DNS=$(grep -v '^#' /run/systemd/resolve/resolv.conf 2>/dev/null | grep 'nameserver' | awk '{print $2}' | tr '\n' ' ' || true)
+if [ -z "${UPSTREAM_DNS// }" ]; then
+  UPSTREAM_DNS="1.1.1.1 8.8.8.8"
+fi
+
 # 1. Deploy CoreDNS for in-cluster service discovery
 echo "==> 1. Deploying CoreDNS..."
 kubectl apply -f - <<MANIFEST
@@ -62,7 +68,7 @@ data:
            fallthrough in-addr.arpa ip6.arpa
            ttl 30
         }
-        forward . /etc/resolv.conf
+        forward . ${UPSTREAM_DNS}
         cache 30
         loop
         reload

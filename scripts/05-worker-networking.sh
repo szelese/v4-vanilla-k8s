@@ -71,6 +71,7 @@ cgroupDriver: systemd
 containerRuntimeEndpoint: unix:///run/containerd/containerd.sock
 failSwapOn: true
 serializeImagePulls: false
+resolvConf: /run/systemd/resolve/resolv.conf
 tlsCertFile: /etc/kubernetes/pki/kubelet-server.crt
 tlsPrivateKeyFile: /etc/kubernetes/pki/kubelet-server.key
 CONFIG
