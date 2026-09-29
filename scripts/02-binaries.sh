@@ -7,11 +7,34 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# 0. 1. Define versions and architecture
+HOST_ARCH=$(uname -m)
+case "${HOST_ARCH}" in
+  x86_64)  ARCH="amd64" ;;
+  aarch64) ARCH="arm64" ;;
+  *)
+    echo "[-] Nem támogatott architektúra: ${HOST_ARCH}. Csak amd64 és arm64 támogatott." >&2
+    exit 1
+    ;;
+esac
+
 K8S_VERSION="v1.36.4"
 ETCD_VERSION="v3.5.14"
 CNI_VERSION="v1.5.0"
 CRICTL_VERSION="v1.36.0"
 ARCH="amd64"
+
+# 0. 2. Function to verify SHA256 checksum of downloaded files
+verify_sha256() {
+  local file="$1"
+  local expected_hash="$2"
+  local actual_hash
+  actual_hash=$(sha256sum "${file}" | awk '{print $1}')
+  if [ "${actual_hash}" != "${expected_hash}" ]; then
+    echo "[-] Checksum hiba a fájlnál: ${file} (Elvárt: ${expected_hash}, Kapott: ${actual_hash})" >&2
+    exit 1
+  fi
+}
 
 # Create essential directories
 echo "==> Creating required directories..."
@@ -22,31 +45,37 @@ mkdir -p /etc/kubernetes/pki \
          /opt/cni/bin
 
 # 1. Download official Kubernetes binaries
-echo "==> Downloading Kubernetes binaries (${K8S_VERSION})..."
+echo "==> Downloading Kubernetes binaries (${K8S_VERSION}, ${ARCH})..."
 for BIN in kube-apiserver kube-controller-manager kube-scheduler kubelet kubectl kube-proxy; do
   echo "    -> ${BIN}"
-  curl -fsSL --retry 3 "https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/${ARCH}/${BIN}" -o "/usr/local/bin/${BIN}"
+  URL="https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/${ARCH}/${BIN}"
+  curl -fsSL --retry 3 "${URL}" -o "/usr/local/bin/${BIN}"
+  EXPECTED_SHA=$(curl -fsSL "${URL}.sha256")
+  verify_sha256 "/usr/local/bin/${BIN}" "${EXPECTED_SHA}"
   chmod +x "/usr/local/bin/${BIN}"
 done
 
 # 2. Download and extract etcd
-echo "==> Downloading etcd (${ETCD_VERSION})..."
-curl -fsSL --retry 3 "https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-${ARCH}.tar.gz" -o /tmp/etcd.tar.gz
-tar -zxf /tmp/etcd.tar.gz -C /tmp/
+echo "==> Downloading etcd (${ETCD_VERSION}, ${ARCH})..."
+ETCD_PKG="etcd-${ETCD_VERSION}-linux-${ARCH}.tar.gz"
+curl -fsSL --retry 3 "https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/${ETCD_PKG}" -o "/tmp/${ETCD_PKG}"
+tar -zxf "/tmp/${ETCD_PKG}" -C /tmp/
 install -m 755 "/tmp/etcd-${ETCD_VERSION}-linux-${ARCH}/etcd" /usr/local/bin/etcd
 install -m 755 "/tmp/etcd-${ETCD_VERSION}-linux-${ARCH}/etcdctl" /usr/local/bin/etcdctl
-rm -rf /tmp/etcd*
+rm -rf "/tmp/${ETCD_PKG}" "/tmp/etcd-${ETCD_VERSION}-linux-${ARCH}"
 
 # 3. Download and extract CNI plugins
-echo "==> Downloading CNI plugins (${CNI_VERSION})..."
-curl -fsSL --retry 3 "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz" -o /tmp/cni.tgz
-tar -zxf /tmp/cni.tgz -C /opt/cni/bin/
-rm -f /tmp/cni.tgz
+echo "==> Downloading CNI plugins (${CNI_VERSION}, ${ARCH})..."
+CNI_PKG="cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz"
+curl -fsSL --retry 3 "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/${CNI_PKG}" -o "/tmp/${CNI_PKG}"
+tar -zxf "/tmp/${CNI_PKG}" -C /opt/cni/bin/
+rm -f "/tmp/${CNI_PKG}"
 
 # 4. Download and install crictl (CRI CLI)
-echo "==> Downloading crictl (${CRICTL_VERSION})..."
-curl -fsSL --retry 3 "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${ARCH}.tar.gz" -o /tmp/crictl.tar.gz
-tar -zxf /tmp/crictl.tar.gz -C /usr/local/bin/
-rm -f /tmp/crictl.tar.gz
+echo "==> Downloading crictl (${CRICTL_VERSION}, ${ARCH})..."
+CRICTL_PKG="crictl-${CRICTL_VERSION}-linux-${ARCH}.tar.gz"
+curl -fsSL --retry 3 "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/${CRICTL_PKG}" -o "/tmp/${CRICTL_PKG}"
+tar -zxf "/tmp/${CRICTL_PKG}" -C /usr/local/bin/
+rm -f "/tmp/${CRICTL_PKG}"
 
 echo "--> Binaries downloaded and installed successfully."

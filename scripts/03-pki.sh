@@ -17,18 +17,31 @@ NODE_NAME=$(hostname -s)
 
 echo "==> Configuring PKI for Node: ${NODE_NAME} (IP: ${NODE_IP})"
 
-# 1. Generate internal Certificate Authority (CA) and Service Account key pair
-echo "==> 1. Generating internal CA and Service Account key pair..."
-openssl genrsa -out ca.key 2048
-openssl req -x509 -new -nodes -key ca.key -subj "/CN=kubernetes-ca" -days 3650 -out ca.crt
+# 1. Generate internal Certificate Authority (CA) and Service Account key pair (idempotent)
+if [ ! -f ca.key ] || [ ! -f ca.crt ]; then
+  echo "==> 1. Generating internal CA..."
+  openssl genrsa -out ca.key 2048
+  openssl req -x509 -new -nodes -key ca.key -subj "/CN=kubernetes-ca" -days 3650 -out ca.crt
+else
+  echo "==> 1. Internal CA already exists, skipping creation."
+fi
 
-openssl genrsa -out sa.key 2048
-openssl rsa -in sa.key -pubout -out sa.pub
+if [ ! -f sa.key ] || [ ! -f sa.pub ]; then
+  echo "==> Generating Service Account key pair..."
+  openssl genrsa -out sa.key 2048
+  openssl rsa -in sa.key -pubout -out sa.pub
+else
+  echo "==> Service Account key pair already exists, skipping creation."
+fi
 
-# 2. Generate Front-Proxy CA (Required for metrics-server & API aggregation)
-echo "==> 2. Generating Front-Proxy CA and Client..."
-openssl genrsa -out front-proxy-ca.key 2048
-openssl req -x509 -new -nodes -key front-proxy-ca.key -subj "/CN=front-proxy-ca" -days 3650 -out front-proxy-ca.crt
+# 2. Generate Front-Proxy CA and Client (idempotent)
+if [ ! -f front-proxy-ca.key ] || [ ! -f front-proxy-ca.crt ]; then
+  echo "==> 2. Generating Front-Proxy CA..."
+  openssl genrsa -out front-proxy-ca.key 2048
+  openssl req -x509 -new -nodes -key front-proxy-ca.key -subj "/CN=front-proxy-ca" -days 3650 -out front-proxy-ca.crt
+else
+  echo "==> 2. Front-Proxy CA already exists, skipping creation."
+fi
 
 openssl genrsa -out front-proxy-client.key 2048
 openssl req -new -key front-proxy-client.key -subj "/CN=front-proxy-client" -out front-proxy-client.csr
@@ -106,6 +119,30 @@ openssl genrsa -out kubelet.key 2048
 openssl req -new -key kubelet.key -subj "/CN=system:node:${NODE_NAME}/O=system:nodes" -out kubelet.csr
 openssl x509 -req -in kubelet.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out kubelet.crt -days 3650
 
+# Generate kubelet SERVER certificate with SANs (for apiserver-to-kubelet mTLS)
+echo "==> Generating kubelet server certificate..."
+cat > kubelet-server.cnf <<CONFIG
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+prompt = no
+[req_distinguished_name]
+CN = ${NODE_NAME}
+[v3_req]
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+[alt_names]
+IP.1 = 127.0.0.1
+IP.2 = ${NODE_IP}
+DNS.1 = localhost
+DNS.2 = ${NODE_NAME}
+CONFIG
+
+openssl genrsa -out kubelet-server.key 2048
+openssl req -new -key kubelet-server.key -out kubelet-server.csr -config kubelet-server.cnf
+openssl x509 -req -in kubelet-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out kubelet-server.crt -days 3650 -extensions v3_req -extfile kubelet-server.cnf
+
 # 6. Generate kubeconfigs with embedded certificates
 echo "==> 6. Generating kubeconfig files..."
 K8S_ENDPOINT="https://127.0.0.1:6443"
@@ -139,6 +176,10 @@ cp /etc/kubernetes/admin.kubeconfig /root/.kube/config
 if [ -n "${SUDO_USER:-}" ]; then
   USER_HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
   mkdir -p "${USER_HOME}/.kube"
+  if [ -f "${USER_HOME}/.kube/config" ]; then
+    echo "==> Backing up existing ${USER_HOME}/.kube/config..."
+    cp "${USER_HOME}/.kube/config" "${USER_HOME}/.kube/config.bak.$(date +%s)"
+  fi
   cp /etc/kubernetes/admin.kubeconfig "${USER_HOME}/.kube/config"
   chown -R "${SUDO_USER}:${SUDO_USER}" "${USER_HOME}/.kube"
 fi

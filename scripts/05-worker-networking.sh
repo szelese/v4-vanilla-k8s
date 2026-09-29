@@ -67,11 +67,12 @@ authorization:
 clusterDomain: cluster.local
 clusterDNS:
   - 10.96.0.10
-resolvConf: /run/systemd/resolve/resolv.conf
 cgroupDriver: systemd
 containerRuntimeEndpoint: unix:///run/containerd/containerd.sock
 failSwapOn: true
 serializeImagePulls: false
+tlsCertFile: /etc/kubernetes/pki/kubelet-server.crt
+tlsPrivateKeyFile: /etc/kubernetes/pki/kubelet-server.key
 CONFIG
 
 cat > /etc/systemd/system/kubelet.service <<UNIT

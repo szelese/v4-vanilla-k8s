@@ -52,7 +52,7 @@ kubectl exec test-client -n "${TEST_NS}" -- nslookup example.com >/dev/null
 
 # Service ClusterIP connectivity
 echo "    -> Testing Service ClusterIP connectivity..."
-kubectl exec test-client -n "${TEST_NS}" -- curl -s -m 5 "http://nginx-svc.${TEST_NS}.svc.cluster.local" >/dev/null
+kubectl exec test-client -n "${TEST_NS}" -- curl -fsS --max-time 5 "http://nginx-svc.${TEST_NS}.svc.cluster.local" >/dev/null
 
 echo "================================================="
 echo "  [SUCCESS] All Smoke Tests Passed! Cluster is OK "

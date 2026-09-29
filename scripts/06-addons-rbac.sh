@@ -94,7 +94,7 @@ spec:
       serviceAccountName: coredns
       containers:
       - name: coredns
-        image: registry.k8s.io/coredns/coredns:v1.11.1
+        image: registry.k8s.io/coredns/coredns:v1.14.7
         imagePullPolicy: IfNotPresent
         resources:
           limits:

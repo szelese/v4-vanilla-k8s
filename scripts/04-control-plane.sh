@@ -74,6 +74,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --service-cluster-ip-range=10.96.0.0/12 \\
   --tls-cert-file=/etc/kubernetes/pki/apiserver.crt \\
   --tls-private-key-file=/etc/kubernetes/pki/apiserver.key \\
+  --kubelet-certificate-authority=/etc/kubernetes/pki/ca.crt \\
   --kubelet-client-certificate=/etc/kubernetes/pki/apiserver.crt \\
   --kubelet-client-key=/etc/kubernetes/pki/apiserver.key \\
   --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname \\
@@ -103,7 +104,7 @@ After=network.target kube-apiserver.service
 
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
-  --bind-address=0.0.0.0 \\
+  --bind-address=127.0.0.1 \\
   --cluster-cidr=10.244.0.0/16 \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt \\
@@ -137,7 +138,7 @@ ExecStart=/usr/local/bin/kube-scheduler \\
   --kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \\
   --authentication-kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \\
   --authorization-kubeconfig=/etc/kubernetes/kube-scheduler.kubeconfig \\
-  --bind-address=0.0.0.0 \\
+  --bind-address=127.0.0.1 \\
   --leader-elect=true \\
   --v=2
 Restart=on-failure

@@ -35,7 +35,15 @@ sysctl --system > /dev/null
 # 4. Install containerd runtime and required network utilities
 echo "==> 4. Installing runtime and networking utilities..."
 apt-get update -y
-apt-get install -y containerd socat conntrack ipset
+apt-get install -y \
+  containerd \
+  socat \
+  conntrack \
+  ipset \
+  curl \
+  openssl \
+  ca-certificates \
+  iptables
 
 # 5. Configure containerd with systemd cgroup driver
 echo "==> 5. Configuring containerd..."
