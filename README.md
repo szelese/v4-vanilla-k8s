@@ -1,6 +1,6 @@
 # V4 Vanilla Kubernetes on Bare-Metal
 
-Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.4 cluster directly on Ubuntu 22.04 bare-metal/VM using native systemd units.
+Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluster directly on Ubuntu 22.04 bare-metal/VM using native systemd units.
 
 ## 🚧 Project Status & Scope
 
@@ -12,11 +12,11 @@ This repository represents an active engineering lab and reference architecture 
 
 ### Compatibility Matrix
 
-| OS Distribution | Architecture | Environment | Status |
-| :--- | :--- | :--- | :--- |
-| **Ubuntu 22.04 LTS** (Jammy) | `amd64` / `arm64` | Local KVM (Multipass) / AWS EC2 | **Tested & Verified** |
-| **Ubuntu 24.04 LTS** (Noble) | `amd64` / `arm64` | Local KVM (Multipass) / AWS EC2 | **Tested & Verified** |
-| **Ubuntu 26.04 LTS** (Resolute) | `amd64` / `arm64` | Local KVM (Multipass) / AWS EC2 | **Tested & Verified** |
+| OS Distribution | Environment | Status |
+| :--- | :--- | :--- |
+| **Ubuntu 22.04 LTS** (Jammy) | Local machine / AWS EC2 | Install and smoke tests passed |
+| **Ubuntu 24.04 LTS** (Noble) | Local machine / AWS EC2 | Install and smoke tests passed |
+| **Ubuntu 26.04 LTS** (Resolute) | Local machine / AWS EC2 | Install and smoke tests passed |
 
 ## Quickstart
 
@@ -41,7 +41,7 @@ sudo ./install.sh
 The cluster is bootstrapped sequentially through modular scripts:
 
 1. **`scripts/01-host-prep.sh`**: Swap off, kernel modules (`overlay`, `br_netfilter`), containerd cgroup v2, and `crictl.yaml`.
-2. **`scripts/02-binaries.sh`**: Fetches official k8s v1.36.4, etcd, CNI plugins, and crictl binaries.
+2. **`scripts/02-binaries.sh`**: Fetches official k8s v1.36.5, etcd, CNI plugins, and crictl binaries.
 3. **`scripts/03-pki.sh`**: OpenSSL mTLS generation (CA, Front-Proxy CA, etcd/apiserver SANs, embedded kubeconfigs).
 4. **`scripts/04-control-plane.sh`**: Systemd units for etcd, apiserver, controller-manager, scheduler, and apiserver-to-kubelet RBAC.
 5. **`scripts/05-worker-networking.sh`**: Bridge CNI (`10.244.0.0/24`), kubelet, and kube-proxy (iptables mode).
