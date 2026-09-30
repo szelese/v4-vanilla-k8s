@@ -18,11 +18,10 @@ case "${HOST_ARCH}" in
     ;;
 esac
 
-K8S_VERSION="v1.36.4"
-ETCD_VERSION="v3.5.14"
-CNI_VERSION="v1.5.0"
+K8S_VERSION="v1.36.5"
+ETCD_VERSION="v3.5.34"
+CNI_VERSION="v1.9.1"
 CRICTL_VERSION="v1.36.0"
-ARCH="amd64"
 
 # 0. 2. Function to verify SHA256 checksum of downloaded files
 verify_sha256() {
