@@ -10,9 +10,13 @@ This repository represents an active engineering lab and reference architecture 
 * **Target Architectures:** `amd64` (x86_64) and `arm64` (aarch64) with automated host detection.
 * **Intended Use:** Educational baseline, cloud-native portfolio showcase, and low-dependency on-prem prototyping.
 
-## Architecture
+### Compatibility Matrix
 
-![Architecture Draft](docs/architecture-draft.png)
+| OS Distribution | Architecture | Environment | Status |
+| :--- | :--- | :--- | :--- |
+| **Ubuntu 22.04 LTS** (Jammy) | `amd64` / `arm64` | Local KVM (Multipass) / AWS EC2 | **Tested & Verified** |
+| **Ubuntu 24.04 LTS** (Noble) | `amd64` / `arm64` | Local KVM (Multipass) / AWS EC2 | **Tested & Verified** |
+| **Ubuntu 26.04 LTS** (Resolute) | `amd64` / `arm64` | Local KVM (Multipass) / AWS EC2 | **Tested & Verified** |
 
 ## Quickstart
 
@@ -27,6 +31,10 @@ sudo ./install.sh
 * **Single-Node Topology:** Designed specifically as a single-host control-plane + worker runtime lab using local bridge CNI (10.244.0.0/24). The kube-apiserver binds to 0.0.0.0:6443 for cluster and Pod reachability, while local CLI tooling connects via 127.0.0.1:6443.
 * **Multi-Node Expansion Requirements:** Expanding beyond a single node requires more than replacing host-local IPAM with an overlay CNI (e.g. Cilium/Calico): it also requires a dedicated control-plane load balancer / VIP, expanded certificate SANs, and controller-managed PodCIDR allocation.
 * **Hardened Static mTLS:** Dedicated x509 PKI issuing mutual TLS certificates for etcd, control plane components, and Kubelet server-client authentication with node SANs. Certificates use 3650-day lifespans without dynamic CSR rotation for operational determinism.
+
+## Architecture
+
+![Architecture Draft](docs/architecture-draft.png)
 
 ## Execution Pipeline
 
