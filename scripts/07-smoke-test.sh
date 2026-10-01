@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 export KUBECONFIG=/etc/kubernetes/admin.kubeconfig
-TEST_NS="smoke-test"
+TEST_NS="smoke-test-$(date +%s)-$$"
 
 echo "================================================="
 echo "        Running Cluster Smoke Tests             "

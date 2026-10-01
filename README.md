@@ -20,6 +20,8 @@ This repository represents an active engineering lab and reference architecture 
 
 ## Quickstart
 
+> **Fresh-host install only:** Run `install.sh` once on a clean Ubuntu host. The installer does not support rerunning after a successful or partial installation. To retry after a failure, provision a fresh VM.
+
 ```bash
 git clone https://github.com/szelese/v4-vanilla-k8s.git
 cd v4-vanilla-k8s

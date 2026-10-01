@@ -1,11 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 0. Ensure script is run as root
+# 0. Ensure script is run as root && check for existing Kubernetes installation
 if [ "$EUID" -ne 0 ]; then
   echo "[-] This script must be run as root (or with sudo)." >&2
   exit 1
 fi
+
+K8S_STATE_PATHS=(
+  /etc/kubernetes/pki
+  /etc/systemd/system/etcd.service
+  /etc/systemd/system/kube-apiserver.service
+  /etc/systemd/system/kubelet.service
+  /etc/systemd/system/kube-proxy.service
+  /var/lib/etcd/member
+)
+
+for path in "${K8S_STATE_PATHS[@]}"; do
+  if [[ -e "${path}" ]]; then
+    echo "Error: Existing or partial Kubernetes installation detected at ${path}." >&2
+    echo "Run this installer only on a clean Ubuntu host." >&2
+    exit 1
+  fi
+done
 
 # 1. Disable swap memory
 echo "==> 1. Disabling swap..."
