@@ -12,7 +12,26 @@ mkdir -p "${PKI_DIR}"
 cd "${PKI_DIR}"
 
 # Robust node IP detection (with fallback)
-NODE_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}' || hostname -I | awk '{print $1}')
+NODE_IP=$(
+  ip -4 route get 1.1.1.1 2>/dev/null |
+    awk '{ for (i = 1; i < NF; i++) if ($i == "src") { print $(i + 1); exit } }'
+) || true
+
+if [[ -z "${NODE_IP}" ]]; then
+  NODE_IP=$(hostname -I 2>/dev/null | awk '{
+    for (i = 1; i <= NF; i++) {
+      if ($i !~ /:/) {
+        print $i
+        exit
+      }
+    }
+  }') || true
+fi
+
+if [[ -z "${NODE_IP}" ]]; then
+  echo "[-] Error: Unable to determine the node IPv4 address." >&2
+  exit 1
+fi
 NODE_NAME=$(hostname -s)
 
 echo "==> Configuring PKI for Node: ${NODE_NAME} (IP: ${NODE_IP})"
