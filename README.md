@@ -1,5 +1,8 @@
 # V4 Vanilla Kubernetes on Bare-Metal and VMs
 
+![Status: WIP](https://img.shields.io/badge/status-work%20in%20progress-orange)
+![Testing: pending](https://img.shields.io/badge/testing-pending-lightgrey)
+
 Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluster directly on Ubuntu 22.04, 24.04, and 26.04 LTS bare-metal/VM hosts using native systemd units.
 
 ## 🚧 Project Status & Scope
