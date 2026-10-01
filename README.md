@@ -1,12 +1,12 @@
-# V4 Vanilla Kubernetes on Bare-Metal
+# V4 Vanilla Kubernetes on Bare-Metal and VMs
 
-Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluster directly on Ubuntu 22.04 bare-metal/VM using native systemd units.
+Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluster directly on Ubuntu 22.04, 24.04, and 26.04 LTS bare-metal/VM hosts using native systemd units.
 
 ## 🚧 Project Status & Scope
 
 This repository represents an active engineering lab and reference architecture for Vanilla Kubernetes on bare-metal.
 
-* **Status:** Tested and verified on clean Ubuntu 22.04 LTS installations (local bare-metal & Multipass KVM).
+* **Status:** Install and smoke tests passed on the combinations listed in the compatibility matrix below.
 * **Target Architectures:** `amd64` (x86_64) and `arm64` (aarch64) with automated host detection.
 * **Intended Use:** Educational baseline, cloud-native portfolio showcase, and low-dependency on-prem prototyping.
 
