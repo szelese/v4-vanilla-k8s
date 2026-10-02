@@ -64,6 +64,52 @@ kubectl exec test-client -n "${TEST_NS}" -- nslookup example.com >/dev/null
 echo "    -> Testing Service ClusterIP connectivity..."
 kubectl exec test-client -n "${TEST_NS}" -- curl -fsS --max-time 5 "http://nginx-svc.${TEST_NS}.svc.cluster.local" >/dev/null
 
+# 5. Test Pod-to-own-Service hairpin traffic
+echo "==> 4. Verifying Pod hairpin through its own Service..."
+
+kubectl apply -n "${TEST_NS}" -f - <<'MANIFEST'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hairpin-check
+  labels:
+    app: hairpin-check
+spec:
+  restartPolicy: Never
+  containers:
+    - name: nginx
+      image: registry.k8s.io/e2e-test-images/nginx:1.14-4
+      ports:
+        - containerPort: 80
+    - name: client
+      image: curlimages/curl:8.7.1
+      command: ["sleep", "3600"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hairpin-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: hairpin-check
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+MANIFEST
+
+kubectl wait --namespace "${TEST_NS}" \
+  --for=condition=Ready pod/hairpin-check \
+  --timeout=60s
+
+kubectl exec --namespace "${TEST_NS}" hairpin-check -c client -- \
+  curl -fsS --retry 10 --retry-delay 1 --retry-connrefused --max-time 5 \
+  "http://hairpin-svc.${TEST_NS}.svc.cluster.local/" >/dev/null
+
+echo "    -> Pod-to-own-Service hairpin works."
+
 echo "================================================="
 echo "  [SUCCESS] All Smoke Tests Passed! Cluster is OK "
 echo "================================================="

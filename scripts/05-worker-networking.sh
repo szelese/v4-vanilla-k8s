@@ -26,6 +26,7 @@ cat > /etc/cni/net.d/10-bridge.conflist <<CONFIG
       "bridge": "cbr0",
       "isGateway": true,
       "ipMasq": true,
+      "hairpinMode": true,
       "ipam": {
         "type": "host-local",
         "subnet": "10.244.0.0/24",
