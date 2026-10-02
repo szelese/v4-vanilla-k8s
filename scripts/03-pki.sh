@@ -18,6 +18,7 @@ NODE_NAME=$(hostname -s)
 
 PKI_DIR="/etc/kubernetes/pki"
 mkdir -p "${PKI_DIR}"
+chmod 700 "${PKI_DIR}"
 cd "${PKI_DIR}"
 
 echo "==> Configuring PKI for Node: ${NODE_NAME} (IP: ${NODE_IP})"
@@ -37,6 +38,17 @@ if [ ! -f sa.key ] || [ ! -f sa.pub ]; then
   openssl rsa -in sa.key -pubout -out sa.pub
 else
   echo "==> Service Account key pair already exists, skipping creation."
+fi
+
+# Generate a dedicated etcd CA
+if [ ! -f etcd-ca.key ] || [ ! -f etcd-ca.crt ]; then
+  echo "==> Generating dedicated etcd CA..."
+  openssl genrsa -out etcd-ca.key 2048
+  openssl req -x509 -new -nodes \
+    -key etcd-ca.key \
+    -subj "/CN=etcd-ca" \
+    -days 3650 \
+    -out etcd-ca.crt
 fi
 
 # 2. Generate Front-Proxy CA and Client (idempotent)
@@ -74,7 +86,36 @@ CONFIG
 
 openssl genrsa -out etcd.key 2048
 openssl req -new -key etcd.key -out etcd.csr -config etcd.cnf
-openssl x509 -req -in etcd.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out etcd.crt -days 3650 -extensions v3_req -extfile etcd.cnf
+openssl x509 -req -in etcd.csr -CA etcd-ca.crt -CAkey etcd-ca.key -CAcreateserial -out etcd.crt -days 3650 -extensions v3_req -extfile etcd.cnf
+
+# Generate the API server's etcd client certificate
+cat > apiserver-etcd-client.cnf <<CONFIG
+[req]
+distinguished_name = req_distinguished_name
+prompt = no
+
+[req_distinguished_name]
+CN = kube-apiserver-etcd-client
+
+[v3_client]
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth
+CONFIG
+
+openssl genrsa -out apiserver-etcd-client.key 2048
+openssl req -new \
+  -key apiserver-etcd-client.key \
+  -out apiserver-etcd-client.csr \
+  -config apiserver-etcd-client.cnf
+openssl x509 -req \
+  -in apiserver-etcd-client.csr \
+  -CA etcd-ca.crt \
+  -CAkey etcd-ca.key \
+  -CAcreateserial \
+  -out apiserver-etcd-client.crt \
+  -days 3650 \
+  -extensions v3_client \
+  -extfile apiserver-etcd-client.cnf
 
 # 4. Generate kube-apiserver certificate with internal routing SANs
 echo "==> 4. Generating kube-apiserver server certificate..."
