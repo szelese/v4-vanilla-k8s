@@ -60,12 +60,12 @@ After=network.target etcd.service
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \\
   --advertise-address=${NODE_IP} \\
-  --allow-privileged=true \\
+  --allow-privileged=false \\
   --authorization-mode=Node,RBAC \\
   --anonymous-auth=false \\
   --client-ca-file=/etc/kubernetes/pki/ca.crt \\
   --enable-admission-plugins=NodeRestriction,ServiceAccount \\
-  --enable-bootstrap-token-auth=true \\
+  --enable-bootstrap-token-auth=false \\
   --etcd-cafile=/etc/kubernetes/pki/etcd-ca.crt \\
   --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt \\
   --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key \\
