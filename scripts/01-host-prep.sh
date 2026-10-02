@@ -63,6 +63,22 @@ apt-get install -y \
   iptables
 
 # 5. Configure containerd with systemd cgroup driver
+
+CONTAINERD_VERSION_OUTPUT=$(containerd --version)
+echo "Detected runtime: ${CONTAINERD_VERSION_OUTPUT}"
+
+if [[ "${CONTAINERD_VERSION_OUTPUT}" =~ ([0-9]+)\.[0-9]+\.[0-9]+ ]]; then
+  CONTAINERD_MAJOR="${BASH_REMATCH[1]}"
+else
+  echo "[-] Could not parse containerd version: ${CONTAINERD_VERSION_OUTPUT}" >&2
+  exit 1
+fi
+
+if (( CONTAINERD_MAJOR < 2 )); then
+  echo "[-] This installer requires containerd 2.x or newer; found: ${CONTAINERD_VERSION_OUTPUT}" >&2
+  exit 1
+fi
+
 echo "==> 5. Configuring containerd..."
 mkdir -p /etc/containerd
 containerd config default | tee /etc/containerd/config.toml > /dev/null

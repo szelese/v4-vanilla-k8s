@@ -178,6 +178,8 @@ done
 # Configure root and local user kubectl context
 mkdir -p /root/.kube
 cp /etc/kubernetes/admin.kubeconfig /root/.kube/config
+chmod 600 /root/.kube/config
+
 if [ -n "${SUDO_USER:-}" ]; then
   USER_HOME=$(getent passwd "${SUDO_USER}" | cut -d: -f6)
   mkdir -p "${USER_HOME}/.kube"
@@ -187,6 +189,7 @@ if [ -n "${SUDO_USER:-}" ]; then
   fi
   cp /etc/kubernetes/admin.kubeconfig "${USER_HOME}/.kube/config"
   chown -R "${SUDO_USER}:${SUDO_USER}" "${USER_HOME}/.kube"
+  chmod 600 "${USER_HOME}/.kube/config"
 fi
 
 # Cleanup temporary CSRs and lock permissions
