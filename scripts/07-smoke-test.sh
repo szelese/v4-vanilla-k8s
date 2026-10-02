@@ -21,9 +21,8 @@ cleanup() {
   echo "==> Cleaning up test namespace..."
   if ! kubectl delete namespace "${TEST_NS}" \
     --ignore-not-found=true \
-    --wait=true \
-    --timeout=60s >/dev/null 2>&1; then
-    echo "[!] Could not confirm deletion of smoke-test namespace ${TEST_NS}." >&2
+    --wait=false >/dev/null 2>&1; then
+    echo "[!] Could not start deletion of smoke-test namespace ${TEST_NS}." >&2
   fi
 
   exit "${exit_code}"

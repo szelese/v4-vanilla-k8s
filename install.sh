@@ -54,7 +54,7 @@ echo "================================================="
 echo "   Installation completed. Cluster status:       "
 echo "================================================="
 kubectl get nodes -o wide
-kubectl get pods -A
+kubectl get pods -A | awk 'NR == 1 || $1 !~ /^smoke-test-/'
 
 INSTALL_END=$(date +%s)
 ELAPSED_SECONDS=$((INSTALL_END - INSTALL_START))
