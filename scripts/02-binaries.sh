@@ -47,6 +47,7 @@ mkdir -p /etc/kubernetes/pki \
          /var/lib/kubelet \
          /var/lib/etcd \
          /opt/cni/bin
+chmod 700 /var/lib/etcd
 
 # 1. Download official Kubernetes binaries
 echo "==> Downloading Kubernetes binaries (${K8S_VERSION}, ${ARCH})..."
