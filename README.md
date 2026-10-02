@@ -30,6 +30,7 @@ Testing was performed across local Multipass/KVM and AWS EC2 environments.
 * **Operating system and architecture:** Ubuntu 22.04, 24.04, or 26.04 LTS on `amd64` (`x86_64`) or `arm64` (`aarch64`), as listed in the compatibility matrix.
 * **Host:** A clean, dedicated machine or VM with root access. The installer changes host-level settings, including swap, kernel modules, sysctl parameters, and containerd configuration.
 * **Network access:** Outbound DNS and internet access to Ubuntu package repositories, `dl.k8s.io`, GitHub Releases, and the container registries used by the smoke tests.
+* **Stable node IP:** The installer detects the node's primary IPv4 address during installation and uses it in certificate SANs and Kubernetes component configuration. Keep this address unchanged while the cluster is in use. If it changes, reinstall on a fresh host.
 
 ## Quickstart
 
