@@ -104,9 +104,12 @@ kubectl wait --namespace "${TEST_NS}" \
   --for=condition=Ready pod/hairpin-check \
   --timeout=60s
 
-kubectl exec --namespace "${TEST_NS}" hairpin-check -c client -- \
+if ! kubectl exec --namespace "${TEST_NS}" hairpin-check -c client -- \
   curl -fsS --retry 10 --retry-delay 1 --retry-connrefused --max-time 5 \
-  "http://hairpin-svc.${TEST_NS}.svc.cluster.local/" >/dev/null
+  "http://hairpin-svc.${TEST_NS}.svc.cluster.local/" >/dev/null 2>&1; then
+  echo "[-] Pod-to-own-Service hairpin request failed after retries." >&2
+  exit 1
+fi
 
 echo "    -> Pod-to-own-Service hairpin works."
 

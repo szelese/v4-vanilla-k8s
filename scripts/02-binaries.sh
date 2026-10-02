@@ -51,13 +51,15 @@ chmod 700 /var/lib/etcd
 
 # 1. Download official Kubernetes binaries
 echo "==> Downloading Kubernetes binaries (${K8S_VERSION}, ${ARCH})..."
+K8S_DOWNLOAD_DIR=$(mktemp -d)
+trap 'rm -rf "${K8S_DOWNLOAD_DIR}"' EXIT
 for BIN in kube-apiserver kube-controller-manager kube-scheduler kubelet kubectl kube-proxy; do
   echo "    -> ${BIN}"
   URL="https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/${ARCH}/${BIN}"
-  curl -fsSL --retry 3 "${URL}" -o "/usr/local/bin/${BIN}"
-  EXPECTED_SHA=$(curl -fsSL "${URL}.sha256")
-  verify_sha256 "/usr/local/bin/${BIN}" "${EXPECTED_SHA}"
-  chmod +x "/usr/local/bin/${BIN}"
+  curl -fsSL --retry 3 "${URL}" -o "${K8S_DOWNLOAD_DIR}/${BIN}"
+  EXPECTED_SHA=$(curl -fsSL --retry 3 "${URL}.sha256")
+  verify_sha256 "${K8S_DOWNLOAD_DIR}/${BIN}" "${EXPECTED_SHA}"
+  install -m 755 "${K8S_DOWNLOAD_DIR}/${BIN}" "/usr/local/bin/${BIN}"
 done
 
 # 2. Download, verify and extract etcd
