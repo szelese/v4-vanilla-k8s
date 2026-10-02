@@ -62,6 +62,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --advertise-address=${NODE_IP} \\
   --allow-privileged=true \\
   --authorization-mode=Node,RBAC \\
+  --anonymous-auth=false \\
   --client-ca-file=/etc/kubernetes/pki/ca.crt \\
   --enable-admission-plugins=NodeRestriction,ServiceAccount \\
   --enable-bootstrap-token-auth=true \\
