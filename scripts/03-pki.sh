@@ -7,6 +7,9 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# Restrict newly created PKI files and kubeconfigs to the owner.
+umask 077
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/node-network.sh"
 
