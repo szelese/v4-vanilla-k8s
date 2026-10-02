@@ -26,11 +26,11 @@ Type=notify
 ExecStart=/usr/local/bin/etcd \\
   --name=${NODE_NAME} \\
   --data-dir=/var/lib/etcd \\
-  --listen-client-urls=https://127.0.0.1:2379 \
-  --advertise-client-urls=https://127.0.0.1:2379 \
-  --listen-peer-urls=https://127.0.0.1:2380 \
-  --initial-advertise-peer-urls=https://127.0.0.1:2380 \
-  --initial-cluster=${NODE_NAME}=https://127.0.0.1:2380 \
+  --listen-client-urls=https://127.0.0.1:2379 \\
+  --advertise-client-urls=https://127.0.0.1:2379 \\
+  --listen-peer-urls=https://127.0.0.1:2380 \\
+  --initial-advertise-peer-urls=https://127.0.0.1:2380 \\
+  --initial-cluster=${NODE_NAME}=https://127.0.0.1:2380 \\
   --initial-cluster-token=etcd-cluster-token \\
   --initial-cluster-state=new \\
   --cert-file=/etc/kubernetes/pki/etcd.crt \\

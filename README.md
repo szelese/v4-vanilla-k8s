@@ -23,7 +23,7 @@ This repository represents an active engineering lab and reference architecture 
 
 `X` = clean installation and all smoke tests passed for that Ubuntu version and architecture.
 
-Test environments: local Multipass/KVM and AWS EC2. The matrix shows which Ubuntu and architecture combinations passed final verification.
+Test environments: a physical laptop with a clean Ubuntu installation, local Multipass/KVM, and AWS EC2.
 
 ## Requirements
 
