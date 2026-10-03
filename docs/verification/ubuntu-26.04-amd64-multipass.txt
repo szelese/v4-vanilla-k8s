@@ -1,0 +1,298 @@
+Date: 2026-10-03
+Environment: Multipass VM
+OS: Ubuntu 26.04
+Architecture: amd64 (x86_64)
+Result: Clean install and all smoke tests passed
+
+--- Installer output ---
+ervin@ervinlx:~$ multipass launch 26.04 --name k8s-test --cpus 4 --memory 6G --disk 25G
+Launched: k8s-test
+ervin@ervinlx:~$ multipass shell k8s-test
+Welcome to Ubuntu 26.04.1 LTS (GNU/Linux 7.0.0-34-generic x86_64)
+
+ * Documentation:  https://docs.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Sat Oct  3 12:34:58 CEST 2026
+
+  System load:  0.72              Processes:             169
+  Usage of /:   8.2% of 23.10GB   Users logged in:       0
+  Memory usage: 5%                IPv4 address for ens3: 10.99.251.37
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+21 updates can be applied immediately.
+6 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+ubuntu@k8s-test:~$ git clone https://github.com/szelese/v4-vanilla-k8s.git
+cd v4-vanilla-k8s
+sudo ./install.sh
+Cloning into 'v4-vanilla-k8s'...
+remote: Enumerating objects: 226, done.
+remote: Counting objects: 100% (226/226), done.
+remote: Compressing objects: 100% (155/155), done.
+remote: Total 226 (delta 151), reused 140 (delta 65), pack-reused 0 (from 0)
+Receiving objects: 100% (226/226), 1.07 MiB | 4.76 MiB/s, done.
+Resolving deltas: 100% (151/151), done.
+=================================================
+   Starting V4 Vanilla Kubernetes Installation   
+=================================================
+==> 1. Disabling swap...
+==> 2. Loading kernel modules...
+overlay
+br_netfilter
+==> 3. Applying sysctl networking parameters...
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward = 1
+==> 4. Installing runtime and networking utilities...
+Hit:1 http://archive.ubuntu.com/ubuntu resolute InRelease
+Hit:2 http://security.ubuntu.com/ubuntu resolute-security InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu resolute-updates InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu resolute-backports InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (8.18.0-1ubuntu2.7).
+curl set to manually installed.
+ca-certificates is already the newest version (20260601~26.04.1).
+ca-certificates set to manually installed.
+iptables is already the newest version (1.8.11-2ubuntu3).
+iptables set to manually installed.
+Solving dependencies... Done
+The following additional packages will be installed:
+  libipset13 libssl3t64 openssl-provider-legacy runc
+The following NEW packages will be installed:
+  conntrack containerd ipset libipset13 runc socat
+The following packages will be upgraded:
+  libssl3t64 openssl openssl-provider-legacy
+3 upgraded, 6 newly installed, 0 to remove and 11 not upgraded.
+Need to get 42.1 MB of archives.
+After this operation, 145 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 openssl-provider-legacy amd64 3.5.5-1ubuntu3.7 [39.7 kB]
+Get:2 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libssl3t64 amd64 3.5.5-1ubuntu3.7 [2368 kB]
+Get:3 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 openssl amd64 3.5.5-1ubuntu3.7 [1243 kB]
+Get:4 http://archive.ubuntu.com/ubuntu resolute/main amd64 conntrack amd64 1:1.4.9-1 [39.9 kB]
+Get:5 http://archive.ubuntu.com/ubuntu resolute/main amd64 runc amd64 1.4.0-0ubuntu1 [9828 kB]
+Get:6 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 containerd amd64 2.2.2-0ubuntu1.1 [28.1 MB]
+Get:7 http://archive.ubuntu.com/ubuntu resolute/main amd64 libipset13 amd64 7.19-1ubuntu3 [61.9 kB]
+Get:8 http://archive.ubuntu.com/ubuntu resolute/main amd64 ipset amd64 7.19-1ubuntu3 [32.7 kB]
+Get:9 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 socat amd64 1.8.1.1-1ubuntu0.1 [403 kB]
+Fetched 42.1 MB in 1s (44.2 MB/s)
+(Reading database ... 91496 files and directories currently installed.)
+Preparing to unpack .../openssl-provider-legacy_3.5.5-1ubuntu3.7_amd64.deb ...
+Unpacking openssl-provider-legacy (3.5.5-1ubuntu3.7) over (3.5.5-1ubuntu3.5) ...
+Setting up openssl-provider-legacy (3.5.5-1ubuntu3.7) ...
+(Reading database ... 91496 files and directories currently installed.)
+Preparing to unpack .../libssl3t64_3.5.5-1ubuntu3.7_amd64.deb ...
+Unpacking libssl3t64:amd64 (3.5.5-1ubuntu3.7) over (3.5.5-1ubuntu3.5) ...
+Setting up libssl3t64:amd64 (3.5.5-1ubuntu3.7) ...
+(Reading database ... 91496 files and directories currently installed.)
+Preparing to unpack .../0-openssl_3.5.5-1ubuntu3.7_amd64.deb ...
+Unpacking openssl (3.5.5-1ubuntu3.7) over (3.5.5-1ubuntu3.5) ...
+Selecting previously unselected package conntrack.
+Preparing to unpack .../1-conntrack_1%3a1.4.9-1_amd64.deb ...
+Unpacking conntrack (1:1.4.9-1) ...
+Selecting previously unselected package runc.
+Preparing to unpack .../2-runc_1.4.0-0ubuntu1_amd64.deb ...
+Unpacking runc (1.4.0-0ubuntu1) ...
+Selecting previously unselected package containerd.
+Preparing to unpack .../3-containerd_2.2.2-0ubuntu1.1_amd64.deb ...
+Unpacking containerd (2.2.2-0ubuntu1.1) ...
+Selecting previously unselected package libipset13:amd64.
+Preparing to unpack .../4-libipset13_7.19-1ubuntu3_amd64.deb ...
+Unpacking libipset13:amd64 (7.19-1ubuntu3) ...
+Selecting previously unselected package ipset.
+Preparing to unpack .../5-ipset_7.19-1ubuntu3_amd64.deb ...
+Unpacking ipset (7.19-1ubuntu3) ...
+Selecting previously unselected package socat.
+Preparing to unpack .../6-socat_1.8.1.1-1ubuntu0.1_amd64.deb ...
+Unpacking socat (1.8.1.1-1ubuntu0.1) ...
+Setting up conntrack (1:1.4.9-1) ...
+Setting up runc (1.4.0-0ubuntu1) ...
+Setting up socat (1.8.1.1-1ubuntu0.1) ...
+Setting up libipset13:amd64 (7.19-1ubuntu3) ...
+Setting up ipset (7.19-1ubuntu3) ...
+Setting up containerd (2.2.2-0ubuntu1.1) ...
+Created symlink '/etc/systemd/system/multi-user.target.wants/containerd.service' → '/usr/lib/systemd/system/containerd.service'.
+Setting up openssl (3.5.5-1ubuntu3.7) ...
+Processing triggers for man-db (2.13.1-1build1) ...
+Processing triggers for libc-bin (2.43-2ubuntu2.4) ...
+Scanning processes...                                                                                                                                                                   
+Scanning candidates...                                                                                                                                                                  
+Scanning linux images...                                                                                                                                                                
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+ /etc/needrestart/restart.d/systemd-manager
+ /etc/needrestart/restart.d/systemd-user
+ systemctl restart packagekit.service ssh.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-udevd.service udisks2.service
+
+Service restarts being deferred:
+ systemctl restart networkd-dispatcher.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ ubuntu @ session #1: sshd-session[1381]
+ ubuntu @ session #3: sshd-session[2001]
+ ubuntu @ user manager: (sd-pam)[1444]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Detected runtime: containerd github.com/containerd/containerd/v2 2.2.2 
+==> 5. Configuring containerd...
+==> 6. Configuring crictl endpoint...
+--> Host preparation completed successfully.
+==> Creating required directories...
+==> Downloading Kubernetes binaries (v1.36.5, amd64)...
+    -> kube-apiserver
+    -> kube-controller-manager
+    -> kube-scheduler
+    -> kubelet
+    -> kubectl
+    -> kube-proxy
+==> Downloading etcd (v3.5.34, amd64)...
+==> Downloading CNI plugins (v1.9.1, amd64)...
+==> Downloading crictl (v1.36.0, amd64)...
+--> Binaries downloaded and installed successfully.
+==> Configuring PKI for Node: k8s-test (IP: 10.99.251.37)
+==> 1. Generating internal CA...
+==> Generating Service Account key pair...
+writing RSA key
+==> Generating dedicated etcd CA...
+==> 2. Generating Front-Proxy CA...
+Certificate request self-signature ok
+subject=CN=front-proxy-client
+==> 3. Generating etcd server certificate...
+Certificate request self-signature ok
+subject=CN=etcd-server
+Certificate request self-signature ok
+subject=CN=kube-apiserver-etcd-client
+==> 4. Generating kube-apiserver server certificate...
+Certificate request self-signature ok
+subject=CN=kube-apiserver
+==> 5. Generating component client certificates...
+Certificate request self-signature ok
+subject=CN=admin, O=system:masters
+Certificate request self-signature ok
+subject=CN=system:kube-controller-manager
+Certificate request self-signature ok
+subject=CN=system:kube-scheduler
+Certificate request self-signature ok
+subject=CN=system:kube-proxy
+Certificate request self-signature ok
+subject=CN=system:node:k8s-test, O=system:nodes
+==> Generating kubelet server certificate...
+Certificate request self-signature ok
+subject=CN=k8s-test
+==> 6. Generating kubeconfig files...
+Cluster "vanilla-k8s" set.
+User "admin" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kube-controller-manager" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kube-scheduler" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kubelet" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kube-proxy" set.
+Context "default" created.
+Switched to context "default".
+--> PKI and kubeconfigs generated successfully.
+==> 1. Configuring etcd systemd service...
+==> 2. Configuring kube-apiserver systemd service...
+==> 3. Configuring kube-controller-manager systemd service...
+==> 4. Configuring kube-scheduler systemd service...
+==> 5. Starting services...
+Created symlink '/etc/systemd/system/multi-user.target.wants/etcd.service' → '/etc/systemd/system/etcd.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-apiserver.service' → '/etc/systemd/system/kube-apiserver.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-controller-manager.service' → '/etc/systemd/system/kube-controller-manager.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-scheduler.service' → '/etc/systemd/system/kube-scheduler.service'.
+==> 6. Waiting for API Server to become responsive...
+==> Applying kube-apiserver to kubelet RBAC rule...
+clusterrolebinding.rbac.authorization.k8s.io/system:kube-apiserver-to-kubelet created
+--> Control plane services started and RBAC applied successfully.
+==> 1. Configuring CNI network plugins...
+==> 2. Configuring Kubelet service...
+==> 3. Configuring Kube-proxy service (iptables mode)...
+==> 4. Starting Kubelet and Kube-proxy...
+Created symlink '/etc/systemd/system/multi-user.target.wants/kubelet.service' → '/etc/systemd/system/kubelet.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-proxy.service' → '/etc/systemd/system/kube-proxy.service'.
+==> 5. Waiting for node to register and become Ready...
+    Waiting for Ready status... (1/30)
+--> Node k8s-test is Ready!
+NAME       STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION             CONTAINER-RUNTIME
+k8s-test   Ready    <none>   2s    v1.36.5   10.99.251.37   <none>        Ubuntu 26.04.1 LTS   7.0.0-34-generic (amd64)   containerd://2.2.2
+--> Worker components initialized successfully.
+==> 1. Deploying CoreDNS...
+serviceaccount/coredns created
+clusterrole.rbac.authorization.k8s.io/system:coredns created
+clusterrolebinding.rbac.authorization.k8s.io/system:coredns created
+configmap/coredns created
+deployment.apps/coredns created
+service/kube-dns created
+==> 2. Waiting for CoreDNS deployment rollout...
+Waiting for deployment spec update to be observed...
+Waiting for deployment spec update to be observed...
+Waiting for deployment "coredns" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "coredns" rollout to finish: 0 of 1 updated replicas are available...
+deployment "coredns" successfully rolled out
+--> CoreDNS deployed successfully.
+=================================================
+        Running Cluster Smoke Tests             
+=================================================
+namespace/smoke-test-1791023768-3727 created
+==> 1. Deploying test nginx workload...
+pod/nginx created
+service/nginx-svc exposed
+==> Waiting for test pod to be Running...
+pod/nginx condition met
+==> 2. Verifying apiserver-to-kubelet communication (logs & exec)...
+    -> API logs and exec functional.
+==> 3. Verifying DNS resolution and Service routing...
+pod/test-client created
+pod/test-client condition met
+    -> Testing internal DNS resolution (nginx-svc.smoke-test-1791023768-3727.svc.cluster.local)...
+    -> Testing external DNS resolution (example.com)...
+    -> Testing Service ClusterIP connectivity...
+==> 4. Verifying Pod hairpin through its own Service...
+pod/hairpin-check created
+service/hairpin-svc created
+pod/hairpin-check condition met
+    -> Pod-to-own-Service hairpin works.
+=================================================
+  [SUCCESS] All Smoke Tests Passed! Cluster is OK 
+=================================================
+==> Cleaning up test namespace...
+=================================================
+   Installation completed. Cluster status:       
+=================================================
+NAME       STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION             CONTAINER-RUNTIME
+k8s-test   Ready    <none>   27s   v1.36.5   10.99.251.37   <none>        Ubuntu 26.04.1 LTS   7.0.0-34-generic (amd64)   containerd://2.2.2
+NAMESPACE                    NAME                      READY   STATUS    RESTARTS   AGE
+kube-system                  coredns-c5f564d4c-44ckv   1/1     Running   0          20s
+
+OS: Ubuntu 26.04.1 LTS
+Architecture: amd64 (x86_64)
+Total installer runtime: 00:00:51
+Smoke tests: passed

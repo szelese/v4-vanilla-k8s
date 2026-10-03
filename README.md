@@ -1,7 +1,8 @@
 # V4 Vanilla Kubernetes on Bare-Metal and VMs
 
-![Status: WIP](https://img.shields.io/badge/status-work%20in%20progress-orange)
-![Testing: pending](https://img.shields.io/badge/testing-pending-lightgrey)
+[![Compatibility: 6/6 verified](https://img.shields.io/badge/Compatibility-6%2F6%20verified-brightgreen?style=flat-square)](./docs/verification/)
+[![ShellCheck](https://github.com/szelese/v4-vanilla-k8s/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/szelese/v4-vanilla-k8s/actions/workflows/shellcheck.yml)
+[![Platform: amd64 + arm64](https://img.shields.io/badge/Platform-amd64%20%2B%20arm64-blue?style=flat-square)](#compatibility-matrix)
 
 Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluster directly on Ubuntu 22.04, 24.04, and 26.04 LTS bare-metal/VM hosts using native systemd units.
 
@@ -9,7 +10,7 @@ Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluste
 
 This repository represents an active engineering lab and reference architecture for Vanilla Kubernetes on bare-metal.
 
-* **Status:** Final compatibility testing is pending. `X` marks a combination where a clean installation and all smoke tests passed.
+* **Status:** Compatibility testing is complete for all six combinations marked `X` below.
 * **Target Architectures:** `amd64` (x86_64) and `arm64` (aarch64) with automated host detection.
 * **Intended Use:** Educational baseline, cloud-native portfolio showcase, and low-dependency on-prem prototyping.
 
@@ -17,13 +18,13 @@ This repository represents an active engineering lab and reference architecture 
 
 | Ubuntu version | `amd64` (`x86_64`) | `arm64` (`aarch64`) |
 | :--- | :---: | :---: |
-| Ubuntu 22.04 LTS (Jammy) |  |  |
-| Ubuntu 24.04 LTS (Noble) |  |  |
-| Ubuntu 26.04 LTS (Resolute) |  |  |
+| Ubuntu 22.04 LTS (Jammy) | X | X |
+| Ubuntu 24.04 LTS (Noble) | X | X |
+| Ubuntu 26.04 LTS (Resolute) | X | X |
 
 `X` = clean installation and all smoke tests passed for that Ubuntu version and architecture.
 
-Test environments: a physical laptop with a clean Ubuntu installation, local Multipass/KVM, and AWS EC2.
+Test environments: a physical laptop with a clean Ubuntu installation, local Multipass, and AWS EC2.
 
 ## Requirements
 

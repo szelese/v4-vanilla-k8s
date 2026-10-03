@@ -1,0 +1,380 @@
+Date: 2026-10-03
+Environment: AWS VM
+OS: Ubuntu 26.04
+Architecture: aarch64
+Result: Clean install and all smoke tests passed
+
+--- Installer output ---
+Welcome to Ubuntu 26.04 LTS (GNU/Linux 7.0.0-1006-aws aarch64)
+
+ * Documentation:  https://docs.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Sat Oct  3 11:09:36 UTC 2026
+
+  System load:  1.33              Temperature:           -273.1 C
+  Usage of /:   30.0% of 6.71GB   Processes:             154
+  Memory usage: 19%               Users logged in:       0
+  Swap usage:   0%                IPv4 address for ens5: 172.31.2.241
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+ubuntu@ip-172-31-2-241:~$ git clone https://github.com/szelese/v4-vanilla-k8s.git
+cd v4-vanilla-k8s
+sudo ./install.sh
+Cloning into 'v4-vanilla-k8s'...
+remote: Enumerating objects: 226, done.
+remote: Counting objects: 100% (226/226), done.
+remote: Compressing objects: 100% (155/155), done.
+remote: Total 226 (delta 151), reused 140 (delta 65), pack-reused 0 (from 0)
+Receiving objects: 100% (226/226), 1.07 MiB | 51.97 MiB/s, done.
+Resolving deltas: 100% (151/151), done.
+=================================================
+   Starting V4 Vanilla Kubernetes Installation   
+=================================================
+==> 1. Disabling swap...
+==> 2. Loading kernel modules...
+overlay
+br_netfilter
+==> 3. Applying sysctl networking parameters...
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward = 1
+==> 4. Installing runtime and networking utilities...
+Get:1 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute InRelease [136 kB]
+Get:2 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]
+Get:3 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports InRelease [137 kB]
+Get:4 http://security.ubuntu.com/ubuntu resolute-security InRelease [137 kB]
+Get:5 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 Packages [1468 kB]
+Get:6 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main Translation-en [524 kB]
+Get:7 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 Components [377 kB]
+Get:8 http://security.ubuntu.com/ubuntu resolute-security/main arm64 Packages [571 kB] 
+Get:9 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 c-n-f Metadata [32.2 kB]
+Get:10 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/universe arm64 Packages [16.2 MB]
+Get:11 http://security.ubuntu.com/ubuntu resolute-security/main Translation-en [129 kB]         
+Get:12 http://security.ubuntu.com/ubuntu resolute-security/main arm64 Components [44.9 kB]         
+Get:13 http://security.ubuntu.com/ubuntu resolute-security/main arm64 c-n-f Metadata [4616 B]
+Get:14 http://security.ubuntu.com/ubuntu resolute-security/universe arm64 Packages [186 kB]        
+Get:15 http://security.ubuntu.com/ubuntu resolute-security/universe Translation-en [60.4 kB]
+Get:16 http://security.ubuntu.com/ubuntu resolute-security/universe arm64 Components [55.6 kB] 
+Get:17 http://security.ubuntu.com/ubuntu resolute-security/universe arm64 c-n-f Metadata [3476 B]
+Get:18 http://security.ubuntu.com/ubuntu resolute-security/restricted arm64 Packages [597 kB]
+Get:19 http://security.ubuntu.com/ubuntu resolute-security/restricted Translation-en [89.7 kB]
+Get:20 http://security.ubuntu.com/ubuntu resolute-security/multiverse arm64 Packages [10.8 kB]      
+Get:21 http://security.ubuntu.com/ubuntu resolute-security/multiverse Translation-en [2844 B]
+Get:22 http://security.ubuntu.com/ubuntu resolute-security/multiverse arm64 Components [212 B]
+Get:23 http://security.ubuntu.com/ubuntu resolute-security/multiverse arm64 c-n-f Metadata [120 B]
+Get:24 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/universe Translation-en [6329 kB]
+Get:25 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/universe arm64 Components [3947 kB]
+Get:26 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/universe arm64 c-n-f Metadata [306 kB]
+Get:27 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/restricted arm64 Packages [187 kB]
+Get:28 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/restricted Translation-en [25.8 kB]
+Get:29 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/restricted arm64 Components [196 B]
+Get:30 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/restricted arm64 c-n-f Metadata [376 B]
+Get:31 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/multiverse arm64 Packages [245 kB]
+Get:32 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/multiverse Translation-en [127 kB]
+Get:33 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/multiverse arm64 Components [44.1 kB]
+Get:34 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/multiverse arm64 c-n-f Metadata [7076 B]
+Get:35 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 Packages [737 kB]
+Get:36 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main Translation-en [167 kB]
+Get:37 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 Components [95.9 kB]
+Get:38 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 c-n-f Metadata [5752 B]
+Get:39 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/universe arm64 Packages [308 kB]
+Get:40 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/universe Translation-en [101 kB]
+Get:41 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/universe arm64 Components [178 kB]
+Get:42 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/universe arm64 c-n-f Metadata [4624 B]
+Get:43 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/restricted arm64 Packages [648 kB]
+Get:44 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/restricted Translation-en [97.7 kB]
+Get:45 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/restricted arm64 Components [212 B]
+Get:46 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/restricted arm64 c-n-f Metadata [380 B]
+Get:47 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/multiverse arm64 Packages [12.1 kB]
+Get:48 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/multiverse Translation-en [3276 B]
+Get:49 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/multiverse arm64 Components [216 B]
+Get:50 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/multiverse arm64 c-n-f Metadata [256 B]
+Get:51 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/main arm64 Components [212 B]
+Get:52 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/main arm64 c-n-f Metadata [112 B]
+Get:53 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/universe arm64 Packages [3140 B]
+Get:54 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/universe Translation-en [7988 B]
+Get:55 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/universe arm64 Components [1060 B]
+Get:56 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/universe arm64 c-n-f Metadata [116 B]
+Get:57 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/restricted arm64 Components [216 B]
+Get:58 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/restricted arm64 c-n-f Metadata [120 B]
+Get:59 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/multiverse arm64 Components [216 B]
+Get:60 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-backports/multiverse arm64 c-n-f Metadata [120 B]
+Fetched 34.5 MB in 4s (8016 kB/s)                       
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+iptables is already the newest version (1.8.11-2ubuntu3).
+iptables set to manually installed.
+Solving dependencies... Done
+The following additional packages will be installed:
+  libcurl3t64-gnutls libcurl4t64 libipset13 libssl3t64 openssl-provider-legacy runc
+The following NEW packages will be installed:
+  conntrack containerd ipset libipset13 runc socat
+The following packages will be upgraded:
+  ca-certificates curl libcurl3t64-gnutls libcurl4t64 libssl3t64 openssl openssl-provider-legacy
+7 upgraded, 6 newly installed, 0 to remove and 177 not upgraded.
+Need to get 39.8 MB of archives.
+After this operation, 139 MB of additional disk space will be used.
+Get:1 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 openssl-provider-legacy arm64 3.5.5-1ubuntu3.7 [38.4 kB]
+Get:2 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 libssl3t64 arm64 3.5.5-1ubuntu3.7 [2769 kB]
+Get:3 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 openssl arm64 3.5.5-1ubuntu3.7 [1223 kB]
+Get:4 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 ca-certificates all 20260601~26.04.1 [139 kB]
+Get:5 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 conntrack arm64 1:1.4.9-1 [39.0 kB]
+Get:6 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 runc arm64 1.4.0-0ubuntu1 [8898 kB]
+Get:7 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 containerd arm64 2.2.2-0ubuntu1.1 [25.1 MB]
+Get:8 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 curl arm64 8.18.0-1ubuntu2.7 [268 kB]
+Get:9 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 libcurl4t64 arm64 8.18.0-1ubuntu2.7 [415 kB]
+Get:10 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 libcurl3t64-gnutls arm64 8.18.0-1ubuntu2.7 [406 kB]
+Get:11 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 libipset13 arm64 7.19-1ubuntu3 [62.0 kB]
+Get:12 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute/main arm64 ipset arm64 7.19-1ubuntu3 [32.7 kB]
+Get:13 http://eu-central-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main arm64 socat arm64 1.8.1.1-1ubuntu0.1 [399 kB]
+Fetched 39.8 MB in 0s (83.2 MB/s)
+Preconfiguring packages ...
+(Reading database ... 88871 files and directories currently installed.)
+Preparing to unpack .../openssl-provider-legacy_3.5.5-1ubuntu3.7_arm64.deb ...
+Unpacking openssl-provider-legacy (3.5.5-1ubuntu3.7) over (3.5.5-1ubuntu3) ...
+Setting up openssl-provider-legacy (3.5.5-1ubuntu3.7) ...
+(Reading database ... 88871 files and directories currently installed.)
+Preparing to unpack .../libssl3t64_3.5.5-1ubuntu3.7_arm64.deb ...
+Unpacking libssl3t64:arm64 (3.5.5-1ubuntu3.7) over (3.5.5-1ubuntu3) ...
+Setting up libssl3t64:arm64 (3.5.5-1ubuntu3.7) ...
+(Reading database ... 88871 files and directories currently installed.)
+Preparing to unpack .../00-openssl_3.5.5-1ubuntu3.7_arm64.deb ...
+Unpacking openssl (3.5.5-1ubuntu3.7) over (3.5.5-1ubuntu3) ...
+Preparing to unpack .../01-ca-certificates_20260601~26.04.1_all.deb ...
+Unpacking ca-certificates (20260601~26.04.1) over (20260223) ...
+Selecting previously unselected package conntrack.
+Preparing to unpack .../02-conntrack_1%3a1.4.9-1_arm64.deb ...
+Unpacking conntrack (1:1.4.9-1) ...
+Selecting previously unselected package runc.
+Preparing to unpack .../03-runc_1.4.0-0ubuntu1_arm64.deb ...
+Unpacking runc (1.4.0-0ubuntu1) ...
+Selecting previously unselected package containerd.
+Preparing to unpack .../04-containerd_2.2.2-0ubuntu1.1_arm64.deb ...
+Unpacking containerd (2.2.2-0ubuntu1.1) ...
+Preparing to unpack .../05-curl_8.18.0-1ubuntu2.7_arm64.deb ...
+Unpacking curl (8.18.0-1ubuntu2.7) over (8.18.0-1ubuntu2.1) ...
+Preparing to unpack .../06-libcurl4t64_8.18.0-1ubuntu2.7_arm64.deb ...
+Unpacking libcurl4t64:arm64 (8.18.0-1ubuntu2.7) over (8.18.0-1ubuntu2.1) ...
+Preparing to unpack .../07-libcurl3t64-gnutls_8.18.0-1ubuntu2.7_arm64.deb ...
+Unpacking libcurl3t64-gnutls:arm64 (8.18.0-1ubuntu2.7) over (8.18.0-1ubuntu2.1) ...
+Selecting previously unselected package libipset13:arm64.
+Preparing to unpack .../08-libipset13_7.19-1ubuntu3_arm64.deb ...
+Unpacking libipset13:arm64 (7.19-1ubuntu3) ...
+Selecting previously unselected package ipset.
+Preparing to unpack .../09-ipset_7.19-1ubuntu3_arm64.deb ...
+Unpacking ipset (7.19-1ubuntu3) ...
+Selecting previously unselected package socat.
+Preparing to unpack .../10-socat_1.8.1.1-1ubuntu0.1_arm64.deb ...
+Unpacking socat (1.8.1.1-1ubuntu0.1) ...
+Setting up libcurl4t64:arm64 (8.18.0-1ubuntu2.7) ...
+Setting up libcurl3t64-gnutls:arm64 (8.18.0-1ubuntu2.7) ...
+Setting up conntrack (1:1.4.9-1) ...
+Setting up runc (1.4.0-0ubuntu1) ...
+Setting up socat (1.8.1.1-1ubuntu0.1) ...
+Setting up libipset13:arm64 (7.19-1ubuntu3) ...
+Setting up curl (8.18.0-1ubuntu2.7) ...
+Setting up ipset (7.19-1ubuntu3) ...
+Setting up containerd (2.2.2-0ubuntu1.1) ...
+Created symlink '/etc/systemd/system/multi-user.target.wants/containerd.service' → '/usr/lib/systemd/system/containerd.service'.
+Setting up openssl (3.5.5-1ubuntu3.7) ...
+Setting up ca-certificates (20260601~26.04.1) ...
+Updating certificates in /etc/ssl/certs...
+rehash: warning: skipping ca-certificates.crt, it does not contain exactly one certificate or CRL
+2 added, 25 removed; done.
+Processing triggers for man-db (2.13.1-1build1) ...
+Processing triggers for libc-bin (2.43-2ubuntu2) ...
+Processing triggers for ca-certificates (20260601~26.04.1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+Scanning processes...                                                                                                                                                                                       
+Scanning candidates...                                                                                                                                                                                      
+Scanning linux images...                                                                                                                                                                                    
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+ /etc/needrestart/restart.d/systemd-manager
+ /etc/needrestart/restart.d/systemd-user
+ systemctl restart packagekit.service ssh.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-udevd.service udisks2.service
+
+Service restarts being deferred:
+ systemctl restart networkd-dispatcher.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ ubuntu @ session #1: sshd-session[1001]
+ ubuntu @ user manager: (sd-pam)[1466]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Detected runtime: containerd github.com/containerd/containerd/v2 2.2.2 
+==> 5. Configuring containerd...
+==> 6. Configuring crictl endpoint...
+--> Host preparation completed successfully.
+==> Creating required directories...
+==> Downloading Kubernetes binaries (v1.36.5, arm64)...
+    -> kube-apiserver
+    -> kube-controller-manager
+    -> kube-scheduler
+    -> kubelet
+    -> kubectl
+    -> kube-proxy
+==> Downloading etcd (v3.5.34, arm64)...
+==> Downloading CNI plugins (v1.9.1, arm64)...
+==> Downloading crictl (v1.36.0, arm64)...
+--> Binaries downloaded and installed successfully.
+==> Configuring PKI for Node: ip-172-31-2-241 (IP: 172.31.2.241)
+==> 1. Generating internal CA...
+==> Generating Service Account key pair...
+writing RSA key
+==> Generating dedicated etcd CA...
+==> 2. Generating Front-Proxy CA...
+Certificate request self-signature ok
+subject=CN=front-proxy-client
+==> 3. Generating etcd server certificate...
+Certificate request self-signature ok
+subject=CN=etcd-server
+Certificate request self-signature ok
+subject=CN=kube-apiserver-etcd-client
+==> 4. Generating kube-apiserver server certificate...
+Certificate request self-signature ok
+subject=CN=kube-apiserver
+==> 5. Generating component client certificates...
+Certificate request self-signature ok
+subject=CN=admin, O=system:masters
+Certificate request self-signature ok
+subject=CN=system:kube-controller-manager
+Certificate request self-signature ok
+subject=CN=system:kube-scheduler
+Certificate request self-signature ok
+subject=CN=system:kube-proxy
+Certificate request self-signature ok
+subject=CN=system:node:ip-172-31-2-241, O=system:nodes
+==> Generating kubelet server certificate...
+Certificate request self-signature ok
+subject=CN=ip-172-31-2-241
+==> 6. Generating kubeconfig files...
+Cluster "vanilla-k8s" set.
+User "admin" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kube-controller-manager" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kube-scheduler" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kubelet" set.
+Context "default" created.
+Switched to context "default".
+Cluster "vanilla-k8s" set.
+User "kube-proxy" set.
+Context "default" created.
+Switched to context "default".
+--> PKI and kubeconfigs generated successfully.
+==> 1. Configuring etcd systemd service...
+==> 2. Configuring kube-apiserver systemd service...
+==> 3. Configuring kube-controller-manager systemd service...
+==> 4. Configuring kube-scheduler systemd service...
+==> 5. Starting services...
+Created symlink '/etc/systemd/system/multi-user.target.wants/etcd.service' → '/etc/systemd/system/etcd.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-apiserver.service' → '/etc/systemd/system/kube-apiserver.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-controller-manager.service' → '/etc/systemd/system/kube-controller-manager.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-scheduler.service' → '/etc/systemd/system/kube-scheduler.service'.
+==> 6. Waiting for API Server to become responsive...
+==> Applying kube-apiserver to kubelet RBAC rule...
+clusterrolebinding.rbac.authorization.k8s.io/system:kube-apiserver-to-kubelet created
+--> Control plane services started and RBAC applied successfully.
+==> 1. Configuring CNI network plugins...
+==> 2. Configuring Kubelet service...
+==> 3. Configuring Kube-proxy service (iptables mode)...
+==> 4. Starting Kubelet and Kube-proxy...
+Created symlink '/etc/systemd/system/multi-user.target.wants/kubelet.service' → '/etc/systemd/system/kubelet.service'.
+Created symlink '/etc/systemd/system/multi-user.target.wants/kube-proxy.service' → '/etc/systemd/system/kube-proxy.service'.
+==> 5. Waiting for node to register and become Ready...
+    Waiting for Ready status... (1/30)
+--> Node ip-172-31-2-241 is Ready!
+NAME              STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION           CONTAINER-RUNTIME
+ip-172-31-2-241   Ready    <none>   2s    v1.36.5   172.31.2.241   <none>        Ubuntu 26.04 LTS   7.0.0-1006-aws (arm64)   containerd://2.2.2
+--> Worker components initialized successfully.
+==> 1. Deploying CoreDNS...
+serviceaccount/coredns created
+clusterrole.rbac.authorization.k8s.io/system:coredns created
+clusterrolebinding.rbac.authorization.k8s.io/system:coredns created
+configmap/coredns created
+deployment.apps/coredns created
+service/kube-dns created
+==> 2. Waiting for CoreDNS deployment rollout...
+Waiting for deployment spec update to be observed...
+Waiting for deployment spec update to be observed...
+Waiting for deployment "coredns" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "coredns" rollout to finish: 0 of 1 updated replicas are available...
+deployment "coredns" successfully rolled out
+--> CoreDNS deployed successfully.
+=================================================
+        Running Cluster Smoke Tests             
+=================================================
+namespace/smoke-test-1791025859-8543 created
+==> 1. Deploying test nginx workload...
+pod/nginx created
+service/nginx-svc exposed
+==> Waiting for test pod to be Running...
+pod/nginx condition met
+==> 2. Verifying apiserver-to-kubelet communication (logs & exec)...
+    -> API logs and exec functional.
+==> 3. Verifying DNS resolution and Service routing...
+pod/test-client created
+pod/test-client condition met
+    -> Testing internal DNS resolution (nginx-svc.smoke-test-1791025859-8543.svc.cluster.local)...
+    -> Testing external DNS resolution (example.com)...
+    -> Testing Service ClusterIP connectivity...
+==> 4. Verifying Pod hairpin through its own Service...
+pod/hairpin-check created
+service/hairpin-svc created
+pod/hairpin-check condition met
+    -> Pod-to-own-Service hairpin works.
+=================================================
+  [SUCCESS] All Smoke Tests Passed! Cluster is OK 
+=================================================
+==> Cleaning up test namespace...
+=================================================
+   Installation completed. Cluster status:       
+=================================================
+NAME              STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION           CONTAINER-RUNTIME
+ip-172-31-2-241   Ready    <none>   27s   v1.36.5   172.31.2.241   <none>        Ubuntu 26.04 LTS   7.0.0-1006-aws (arm64)   containerd://2.2.2
+NAMESPACE                    NAME                      READY   STATUS    RESTARTS   AGE
+kube-system                  coredns-c5f564d4c-fxgq8   1/1     Running   0          18s
+
+OS: Ubuntu 26.04 LTS
+Architecture: arm64 (aarch64)
+Total installer runtime: 00:01:24
+Smoke tests: passed
