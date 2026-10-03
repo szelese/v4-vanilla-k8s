@@ -51,7 +51,7 @@ chmod 700 /var/lib/etcd
 
 # 1. Download official Kubernetes binaries
 echo "==> Downloading Kubernetes binaries (${K8S_VERSION}, ${ARCH})..."
-DOWNLOAD_DIR=$(mktemp -d)
+DOWNLOAD_DIR=$(mktemp -d /var/tmp/v4-vanilla-k8s.XXXXXX)
 trap 'rm -rf -- "${DOWNLOAD_DIR}"' EXIT
 for BIN in kube-apiserver kube-controller-manager kube-scheduler kubelet kubectl kube-proxy; do
   echo "    -> ${BIN}"
