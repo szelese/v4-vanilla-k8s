@@ -234,6 +234,6 @@ if [ -n "${SUDO_USER:-}" ]; then
 fi
 
 # Cleanup temporary CSRs and lock permissions
-rm -f *.csr *.cnf
-chmod 600 *.key
+rm -f -- *.csr *.cnf
+chmod 600 -- *.key
 echo "--> PKI and kubeconfigs generated successfully."

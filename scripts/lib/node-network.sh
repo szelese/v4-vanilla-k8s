@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 detect_node_ip() {
   local node_ip=""
 

@@ -1,0 +1,26 @@
+name: ShellCheck
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: Lint Bash scripts
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y shellcheck
+
+      - name: Run ShellCheck
+        run: shellcheck -x install.sh scripts/*.sh scripts/lib/*.sh
