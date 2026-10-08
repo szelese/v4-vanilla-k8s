@@ -6,6 +6,12 @@
 
 Modular, automated scripts for bootstrapping a Vanilla Kubernetes v1.36.5 cluster directly on Ubuntu 22.04, 24.04, and 26.04 LTS bare-metal/VM hosts using native systemd units.
 
+## ⚡ Verified Vanilla Kubernetes in 59 Seconds
+
+Automated bare-metal and VM bootstrap of Vanilla Kubernetes v1.36.5 with containerd 2.x, custom OpenSSL mTLS PKI, and automated smoke tests directly on native systemd.
+
+![Vanilla Kubernetes 59s Bootstrap](docs/demo_final.gif)
+
 ## 🚧 Project Status & Scope
 
 This repository represents an active engineering lab and reference architecture for Vanilla Kubernetes on bare-metal.
